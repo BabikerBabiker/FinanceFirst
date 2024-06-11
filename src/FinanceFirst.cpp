@@ -37,6 +37,10 @@ void show_main_menu(GtkWindow *parent_window) {
     GtkWidget *label;
     GtkWidget *vbox;
     
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+    gtk_window_set_decorated(GTK_WINDOW(window), TRUE);
+    gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
+
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Main Menu");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
@@ -49,13 +53,12 @@ void show_main_menu(GtkWindow *parent_window) {
 
     gtk_widget_show_all(window);
 
-    // Custom callback for delete-event
     g_signal_connect(window, "delete-event", G_CALLBACK(+[](GtkWidget*, GdkEvent*, gpointer) -> gboolean {
-        exit(0); // Exit the application
-        return FALSE; // Return FALSE to indicate the event has been handled
+        exit(0);
+        return FALSE;
     }), NULL);
 
-    gtk_widget_hide(GTK_WIDGET(parent_window)); // Hide the login/signup window
+    gtk_widget_hide(GTK_WIDGET(parent_window));
 }
 
 void LogIn(sqlite3* db, const string& phoneNum, const string& password, GtkWindow *parent_window) {
@@ -272,33 +275,27 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "FinanceFirst");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE); // Set window non-resizable
-    gtk_window_set_decorated(GTK_WINDOW(window), TRUE); // Set window undecorated
-    gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG); // Set window type hint to dialog
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+    gtk_window_set_decorated(GTK_WINDOW(window), TRUE);
+    gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-    // Apply CSS to change the background color of the window
     GtkCssProvider *provider = gtk_css_provider_new();
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-    // Create an outer vertical box to center the inner box
     outer_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add(GTK_CONTAINER(window), outer_box);
 
-    // Create a box for the label to add padding
     label_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(outer_box), label_box, FALSE, FALSE, 0);
 
-    // Add label "Regal Banking" at the top with bigger font size
     label = gtk_label_new("<span font='25'><span foreground='#FFA500'>Finance</span><span foreground='#0000FF'>First</span></span>");
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
     gtk_label_set_xalign(GTK_LABEL(label), 0.5);
-    gtk_box_pack_start(GTK_BOX(label_box), label, FALSE, FALSE, 50); // Add padding of 50 pixels to the top
+    gtk_box_pack_start(GTK_BOX(label_box), label, FALSE, FALSE, 50);
 
-    // Create an inner vertical box to hold the buttons
     button_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_set_homogeneous(GTK_BOX(button_box), FALSE);
 
-    // Center the button_box in the outer_box
     gtk_widget_set_valign(button_box, GTK_ALIGN_CENTER);
     gtk_widget_set_halign(button_box, GTK_ALIGN_CENTER);
 
