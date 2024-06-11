@@ -1,2 +1,3 @@
 src/*
 !src/FinanceFirst.cpp
+build/login.db
