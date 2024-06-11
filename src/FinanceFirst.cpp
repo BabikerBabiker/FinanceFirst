@@ -235,6 +235,8 @@ static void on_signup_button_clicked(GtkWidget *widget, gpointer data) {
     gtk_box_pack_start(GTK_BOX(content_area), password_label, FALSE, FALSE, 5);
     gtk_box_pack_start(GTK_BOX(content_area), password_entry, FALSE, FALSE, 5);
 
+    gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+
     gtk_widget_show_all(dialog);
 
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
@@ -243,7 +245,9 @@ static void on_signup_button_clicked(GtkWidget *widget, gpointer data) {
         const char *phone_num = gtk_entry_get_text(GTK_ENTRY(phone_entry));
         const char *password = gtk_entry_get_text(GTK_ENTRY(password_entry));
 
-        if (isValidPhoneNumber(phone_num)) {
+        if (strlen(fname) == 0 || strlen(lname) == 0 || strlen(phone_num) == 0 || strlen(password) == 0) {
+            show_message_dialog(parent_window, "All fields are required.");
+        } else if (isValidPhoneNumber(phone_num)) {
             sqlite3 *db;
             int rc = sqlite3_open("login.db", &db);
             if (rc) {
@@ -257,8 +261,10 @@ static void on_signup_button_clicked(GtkWidget *widget, gpointer data) {
             show_message_dialog(parent_window, "Invalid phone number format.");
         }
     }
+
     gtk_widget_destroy(dialog);
 }
+
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     sqlite3 *db;
