@@ -1,4 +1,5 @@
 *
 !.gitignore
-!FinanceFirst.cpp
 !*/
+!src/
+!src/FinanceFirst.cpp
