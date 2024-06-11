@@ -103,6 +103,34 @@ void SignUp(sqlite3* db, const string& fname, const string& lname, const string&
     std::string cleanedPhoneNum = cleanNumber(phoneNum);
     std::string encryptedPhoneNum = encrypt.encrypt(cleanedPhoneNum);
 
+    // Check if the phone number already exists in the database
+    const char *checkPhoneNum = "SELECT COUNT(*) FROM LogIn WHERE PhoneNum = ?;";
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, checkPhoneNum, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        cerr << "SQL error (prepare check phone number): " << sqlite3_errmsg(db) << endl;
+        show_message_dialog(parent_window, "SQL error: Unable to check phone number.");
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, encryptedPhoneNum.c_str(), -1, SQLITE_STATIC);
+
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        int count = sqlite3_column_int(stmt, 0);
+        if (count > 0) {
+            show_message_dialog(parent_window, "Phone number already has account. Please use a different phone number or login.");
+            sqlite3_finalize(stmt);
+            return;
+        }
+    } else {
+        cerr << "SQL error (check phone number): " << sqlite3_errmsg(db) << endl;
+        show_message_dialog(parent_window, "SQL error: Unable to check phone number.");
+        sqlite3_finalize(stmt);
+        return;
+    }
+    sqlite3_finalize(stmt);
+
     std::string encryptedLname = encrypt.encrypt(lname);
     std::string encryptedPassword = encrypt.encrypt(password);
     std::string encryptedFname = encrypt.encrypt(fname);
@@ -117,8 +145,7 @@ void SignUp(sqlite3* db, const string& fname, const string& lname, const string&
 
     const char *addNewUser = "INSERT INTO LogIn (AccNum, RoutNum, LastName, FirstName, PhoneNum, Password) VALUES (?, ?, ?, ?, ?, ?);";
 
-    sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(db, addNewUser, -1, &stmt, NULL);
+    rc = sqlite3_prepare_v2(db, addNewUser, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
         cerr << "SQL error (prepare insert): " << sqlite3_errmsg(db) << endl;
         show_message_dialog(parent_window, "SQL error: Unable to create account.");
