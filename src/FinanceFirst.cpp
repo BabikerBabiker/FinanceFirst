@@ -36,12 +36,11 @@ void show_main_menu(GtkWindow *parent_window) {
     GtkWidget *window;
     GtkWidget *label;
     GtkWidget *vbox;
-    
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
     gtk_window_set_decorated(GTK_WINDOW(window), TRUE);
     gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Main Menu");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
 
