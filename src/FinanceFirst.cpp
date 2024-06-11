@@ -14,6 +14,8 @@ using std::endl;
 using std::regex;
 using std::string;
 
+Encryptor encryptor;
+
 static void show_message_dialog(GtkWindow *parent, const char *message) {
     GtkWidget *dialog = gtk_message_dialog_new(
         parent, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", message);
@@ -61,8 +63,6 @@ void show_main_menu(GtkWindow *parent_window) {
 }
 
 void LogIn(sqlite3* db, const string& phoneNum, const string& password, GtkWindow *parent_window) {
-    Encryptor encryptor;
-
     string cleanedPhoneNum = cleanNumber(phoneNum);
     std::string encryptedPhoneNum = encryptor.encrypt(cleanedPhoneNum);
     std::string encryptedPassword = encryptor.encrypt(password);
@@ -98,10 +98,8 @@ void LogIn(sqlite3* db, const string& phoneNum, const string& password, GtkWindo
 }
 
 void SignUp(sqlite3* db, const string& fname, const string& lname, const string& phoneNum, const string& password, GtkWindow *parent_window) {
-    Encryptor encrypt;
-
     std::string cleanedPhoneNum = cleanNumber(phoneNum);
-    std::string encryptedPhoneNum = encrypt.encrypt(cleanedPhoneNum);
+    std::string encryptedPhoneNum = encryptor.encrypt(cleanedPhoneNum);
 
     // Check if the phone number already exists in the database
     const char *checkPhoneNum = "SELECT COUNT(*) FROM LogIn WHERE PhoneNum = ?;";
@@ -131,17 +129,17 @@ void SignUp(sqlite3* db, const string& fname, const string& lname, const string&
     }
     sqlite3_finalize(stmt);
 
-    std::string encryptedLname = encrypt.encrypt(lname);
-    std::string encryptedPassword = encrypt.encrypt(password);
-    std::string encryptedFname = encrypt.encrypt(fname);
+    std::string encryptedLname = encryptor.encrypt(lname);
+    std::string encryptedPassword = encryptor.encrypt(password);
+    std::string encryptedFname = encryptor.encrypt(fname);
 
     srand(time(0));
 
     int accNum = rand() % 900000 + 100000;
-    std::string encryptedAccNum = encrypt.encrypt(std::to_string(accNum));
+    std::string encryptedAccNum = encryptor.encrypt(std::to_string(accNum));
 
     int routNum = rand() % 900000 + 100000;
-    std::string encryptedRoutNum = encrypt.encrypt(std::to_string(routNum));
+    std::string encryptedRoutNum = encryptor.encrypt(std::to_string(routNum));
 
     const char *addNewUser = "INSERT INTO LogIn (AccNum, RoutNum, LastName, FirstName, PhoneNum, Password) VALUES (?, ?, ?, ?, ?, ?);";
 
