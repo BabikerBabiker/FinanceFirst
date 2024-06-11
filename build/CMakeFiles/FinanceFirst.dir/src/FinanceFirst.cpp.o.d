@@ -1,5 +1,5 @@
 CMakeFiles/FinanceFirst.dir/src/FinanceFirst.cpp.o: \
- /home/babiker/Desktop/FinanceFirst/src/FinanceFirst.cpp \
+ /home/babiker/Documents/GitHub/FinanceFirst/src/FinanceFirst.cpp \
  /usr/include/stdc-predef.h /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gdk/gdk.h /usr/include/gtk-3.0/gdk/gdkconfig.h \
  /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
@@ -849,4 +849,4 @@ CMakeFiles/FinanceFirst.dir/src/FinanceFirst.cpp.o: \
  /usr/include/c++/11/bits/regex.h /usr/include/c++/11/bits/regex.tcc \
  /usr/include/c++/11/bits/regex_executor.h \
  /usr/include/c++/11/bits/regex_executor.tcc /usr/include/c++/11/limits \
- /home/babiker/Desktop/FinanceFirst/src/encrypt.hpp
+ /home/babiker/Documents/GitHub/FinanceFirst/src/encrypt.hpp

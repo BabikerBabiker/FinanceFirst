@@ -270,7 +270,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     GtkWidget *label;
 
     window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Babiker's Banking");
+    gtk_window_set_title(GTK_WINDOW(window), "FinanceFirst");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE); // Set window non-resizable
     gtk_window_set_decorated(GTK_WINDOW(window), TRUE); // Set window undecorated
@@ -289,7 +289,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     gtk_box_pack_start(GTK_BOX(outer_box), label_box, FALSE, FALSE, 0);
 
     // Add label "Regal Banking" at the top with bigger font size
-    label = gtk_label_new("<span font='25'><span foreground='#FFA500'>Babiker's</span><span foreground='#0000FF'> Banking</span></span>");
+    label = gtk_label_new("<span font='25'><span foreground='#FFA500'>Finance</span><span foreground='#0000FF'>First</span></span>");
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
     gtk_label_set_xalign(GTK_LABEL(label), 0.5);
     gtk_box_pack_start(GTK_BOX(label_box), label, FALSE, FALSE, 50); // Add padding of 50 pixels to the top

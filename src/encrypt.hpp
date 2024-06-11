@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ENCRYPT_HPP
+#define ENCRYPT_HPP
 #include <string>
 
 class Encryptor {
@@ -24,3 +25,5 @@ private:
         return output;
     }
 };
+
+#endif

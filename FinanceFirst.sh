@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/Desktop/FinanceFirst/build || { echo "Failed to navigate to build directory"; exit 1; }
+cd ~/Documents/GitHub/FinanceFirst/build || { echo "Failed to navigate to build directory"; exit 1; }
 
 cmake .. || { echo "CMake configuration failed"; exit 1; }
 

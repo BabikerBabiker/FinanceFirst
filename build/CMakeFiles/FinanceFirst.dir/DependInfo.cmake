@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/babiker/Desktop/FinanceFirst/src/FinanceFirst.cpp" "CMakeFiles/FinanceFirst.dir/src/FinanceFirst.cpp.o" "gcc" "CMakeFiles/FinanceFirst.dir/src/FinanceFirst.cpp.o.d"
+  "/home/babiker/Documents/GitHub/FinanceFirst/src/FinanceFirst.cpp" "CMakeFiles/FinanceFirst.dir/src/FinanceFirst.cpp.o" "gcc" "CMakeFiles/FinanceFirst.dir/src/FinanceFirst.cpp.o.d"
   )
 
 # Targets to which this target links.
