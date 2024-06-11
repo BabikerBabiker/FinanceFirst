@@ -4,7 +4,7 @@
 
 class Encryptor {
 public:
-    Encryptor() : key("isoi2hyis82782") {}
+    Encryptor() : key("63st*^rL6s56&d6z%k2^gXwP2Ao!!Q") {}
 
     std::string encrypt(const std::string& input) {
         return xorEncryptDecrypt(input);
