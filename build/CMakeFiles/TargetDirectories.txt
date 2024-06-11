@@ -1,0 +1,3 @@
+/home/babiker/Desktop/FinanceFirst/build/CMakeFiles/FinanceFirst.dir
+/home/babiker/Desktop/FinanceFirst/build/CMakeFiles/edit_cache.dir
+/home/babiker/Desktop/FinanceFirst/build/CMakeFiles/rebuild_cache.dir
