@@ -1,3 +1,0 @@
-/home/babiker/Documents/GitHub/FinanceFirst/build/CMakeFiles/FinanceFirst.dir
-/home/babiker/Documents/GitHub/FinanceFirst/build/CMakeFiles/edit_cache.dir
-/home/babiker/Documents/GitHub/FinanceFirst/build/CMakeFiles/rebuild_cache.dir
