@@ -34,7 +34,7 @@ string cleanNumber(const string& phoneNum) {
     return phone;
 }
 
-void show_main_menu(GtkWindow *parent_window) {
+void show_main_menu(GtkWindow *parent_window, string fname) {
     GtkWidget *window;
     GtkWidget *label;
     GtkWidget *vbox;
@@ -49,7 +49,8 @@ void show_main_menu(GtkWindow *parent_window) {
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
-    label = gtk_label_new("Welcome to the main menu!");
+    string welcomeMSG = "Welcome " + encryptor.decrypt(fname) + "!";
+    label = gtk_label_new(welcomeMSG.c_str());
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
     gtk_widget_show_all(window);
@@ -68,6 +69,7 @@ void LogIn(sqlite3* db, const string& phoneNum, const string& password, GtkWindo
     std::string encryptedPassword = encryptor.encrypt(password);
 
     string checkUser = "SELECT COUNT(*) FROM LogIn WHERE PhoneNum = ? AND Password = ?;";
+    string getFname = "SELECT FirstName FROM LogIn WHERE PhoneNum = ? AND Password = ?;";
 
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, checkUser.c_str(), -1, &stmt, NULL);
@@ -83,9 +85,30 @@ void LogIn(sqlite3* db, const string& phoneNum, const string& password, GtkWindo
     rc = sqlite3_step(stmt);
     if (rc == SQLITE_ROW) {
         int count = sqlite3_column_int(stmt, 0);
+        sqlite3_finalize(stmt);
+
         if (count > 0) {
-            show_message_dialog(parent_window, "LogIn Successful!");
-            show_main_menu(parent_window);
+            rc = sqlite3_prepare_v2(db, getFname.c_str(), -1, &stmt, NULL);
+            if (rc != SQLITE_OK) {
+                cerr << "[SQL ERROR]: Get fName << " << sqlite3_errmsg(db) << endl;
+                show_message_dialog(parent_window, "SQL error: Get fName.");
+                return;
+            }
+
+            sqlite3_bind_text(stmt, 1, encryptedPhoneNum.c_str(), -1, SQLITE_STATIC);
+            sqlite3_bind_text(stmt, 2, encryptedPassword.c_str(), -1, SQLITE_STATIC);
+
+            rc = sqlite3_step(stmt);
+            if (rc == SQLITE_ROW) {
+                const char* fName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+                show_message_dialog(parent_window, "LogIn Successful!");
+                show_main_menu(parent_window, fName);
+            } else {
+                cerr << "SQL error (get fName): " << sqlite3_errmsg(db) << endl;
+                show_message_dialog(parent_window, "SQL error: Unable to get fName.");
+            }
+
+            sqlite3_finalize(stmt);
         } else {
             show_message_dialog(parent_window, "Invalid phone number or password.");
         }
@@ -93,8 +116,6 @@ void LogIn(sqlite3* db, const string& phoneNum, const string& password, GtkWindo
         cerr << "SQL error (check user): " << sqlite3_errmsg(db) << endl;
         show_message_dialog(parent_window, "SQL error: Unable to check user.");
     }
-
-    sqlite3_finalize(stmt);
 }
 
 void SignUp(sqlite3* db, const string& fname, const string& lname, const string& phoneNum, const string& password, GtkWindow *parent_window) {
