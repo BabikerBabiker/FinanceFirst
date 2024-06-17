@@ -346,13 +346,13 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
         return;
     }
 
-const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
-                                   "AccNum INTEGER NOT NULL,"
-                                   "balAMT DECIMAL PRIMARY KEY NOT NULL,"
-                                   "FOREIGN KEY (AccNum) REFERENCES LogIn(AccNum)"
-                                   ");";
+    const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
+                                       "AccNum INTEGER NOT NULL,"
+                                       "balAMT DECIMAL PRIMARY KEY NOT NULL,"
+                                       "FOREIGN KEY (AccNum) REFERENCES LogIn(AccNum)"
+                                       ");";
 
-     rc = sqlite3_exec(db, sql_create_bal_table, NULL, 0, &zErrMsg);
+    rc = sqlite3_exec(db, sql_create_bal_table, NULL, 0, &zErrMsg);
     if (rc != SQLITE_OK) {
         cerr << "SQL error (create bal table): " << zErrMsg << endl;
         sqlite3_free(zErrMsg);
@@ -378,16 +378,26 @@ const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
     GtkCssProvider *provider = gtk_css_provider_new();
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
+    const char *css_path = "/home/babiker/Desktop/GitHub/FinanceFirst/src/style.css";
+    GError *error = nullptr;
+    gtk_css_provider_load_from_path(provider, css_path, &error);
+    if (error) {
+        cerr << "Failed to load CSS file: " << error->message << endl;
+        g_error_free(error);
+    }
+
     outer_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add(GTK_CONTAINER(window), outer_box);
 
     label_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(outer_box), label_box, FALSE, FALSE, 0);
 
-    label = gtk_label_new("<span font='25'><span foreground='#FFA500'>Finance</span><span foreground='#0000FF'>First</span></span>");
+    label = gtk_label_new("FinanceFirst");
     gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
     gtk_label_set_xalign(GTK_LABEL(label), 0.5);
+    gtk_widget_set_name(label, "heading-label");
     gtk_box_pack_start(GTK_BOX(label_box), label, FALSE, FALSE, 50);
+
 
     button_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_set_homogeneous(GTK_BOX(button_box), FALSE);
@@ -396,10 +406,12 @@ const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
     gtk_widget_set_halign(button_box, GTK_ALIGN_CENTER);
 
     login_button = gtk_button_new_with_label("Login");
+    gtk_widget_set_name(login_button, "custom-button");
     g_signal_connect(login_button, "clicked", G_CALLBACK(on_login_button_clicked), window);
     gtk_box_pack_start(GTK_BOX(button_box), login_button, TRUE, TRUE, 0);
 
     signup_button = gtk_button_new_with_label("Sign Up");
+    gtk_widget_set_name(signup_button, "custom-button");
     g_signal_connect(signup_button, "clicked", G_CALLBACK(on_signup_button_clicked), window);
     gtk_box_pack_start(GTK_BOX(button_box), signup_button, TRUE, TRUE, 0);
 
@@ -409,6 +421,7 @@ const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
 
     sqlite3_close(db);
 }
+
 
 int main(int argc, char **argv) {
     GtkApplication *app;
