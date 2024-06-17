@@ -13,6 +13,7 @@ using std::cout;
 using std::endl;
 using std::regex;
 using std::string;
+using std::to_string;
 
 Encryptor encryptor;
 
@@ -26,6 +27,14 @@ static void show_message_dialog(GtkWindow *parent, const char *message) {
 bool isValidPhoneNumber(const string phoneNum) {
     regex pattern(R"(^(\d{3}[-. ]?)?\d{3}[-. ]?\d{4}$)");
     return regex_match(phoneNum, pattern);
+}
+
+string capitalizeFirstLetter(const string& str) {
+    if (str.empty()) return str;
+    string capitalizedStr = str;
+    capitalizedStr[0] = std::toupper(capitalizedStr[0]);
+    std::transform(capitalizedStr.begin() + 1, capitalizedStr.end(), capitalizedStr.begin() + 1, ::tolower);
+    return capitalizedStr;
 }
 
 string cleanNumber(const string& phoneNum) {
@@ -122,7 +131,6 @@ void SignUp(sqlite3* db, const string& fname, const string& lname, const string&
     std::string cleanedPhoneNum = cleanNumber(phoneNum);
     std::string encryptedPhoneNum = encryptor.encrypt(cleanedPhoneNum);
 
-    // Check if the phone number already exists in the database
     const char *checkPhoneNum = "SELECT COUNT(*) FROM LogIn WHERE PhoneNum = ?;";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, checkPhoneNum, -1, &stmt, NULL);
@@ -150,17 +158,20 @@ void SignUp(sqlite3* db, const string& fname, const string& lname, const string&
     }
     sqlite3_finalize(stmt);
 
-    std::string encryptedLname = encryptor.encrypt(lname);
+    std::string capitalizedFname = capitalizeFirstLetter(fname);
+    std::string capitalizedLname = capitalizeFirstLetter(lname);
+
+    std::string encryptedLname = encryptor.encrypt(capitalizedLname);
     std::string encryptedPassword = encryptor.encrypt(password);
-    std::string encryptedFname = encryptor.encrypt(fname);
+    std::string encryptedFname = encryptor.encrypt(capitalizedFname);
 
     srand(time(0));
 
     int accNum = rand() % 900000 + 100000;
-    std::string encryptedAccNum = encryptor.encrypt(std::to_string(accNum));
+    std::string encryptedAccNum = encryptor.encrypt(to_string(accNum));
 
     int routNum = rand() % 900000 + 100000;
-    std::string encryptedRoutNum = encryptor.encrypt(std::to_string(routNum));
+    std::string encryptedRoutNum = encryptor.encrypt(to_string(routNum));
 
     const char *addNewUser = "INSERT INTO LogIn (AccNum, RoutNum, LastName, FirstName, PhoneNum, Password) VALUES (?, ?, ?, ?, ?, ?);";
 
@@ -183,11 +194,31 @@ void SignUp(sqlite3* db, const string& fname, const string& lname, const string&
         cerr << "SQL error (insert user): " << sqlite3_errmsg(db) << endl;
         show_message_dialog(parent_window, "SQL error: Unable to create account.");
     } else {
-        show_message_dialog(parent_window, "Sign Up Successful!");
+        const char *addBalance = "INSERT INTO Balance (AccNum, balAMT) VALUES (?, ?);";
+        rc = sqlite3_prepare_v2(db, addBalance, -1, &stmt, NULL);
+        if (rc != SQLITE_OK) {
+            cerr << "SQL error (prepare insert balance): " << sqlite3_errmsg(db) << endl;
+            show_message_dialog(parent_window, "SQL error: Unable to set initial balance.");
+            return;
+        }
+
+        double initialBalance = 1000;
+        std::string encryptedBal = encryptor.encrypt(to_string(initialBalance));
+        sqlite3_bind_text(stmt, 1, encryptedAccNum.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, encryptedBal.c_str(), -1, SQLITE_STATIC);
+
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_DONE) {
+            cerr << "SQL error (insert balance): " << sqlite3_errmsg(db) << endl;
+            show_message_dialog(parent_window, "SQL error: Unable to set initial balance.");
+        } else {
+            show_message_dialog(parent_window, "Sign Up Successful!");
+        }
     }
 
     sqlite3_finalize(stmt);
 }
+
 
 static void on_login_button_clicked(GtkWidget *widget, gpointer data) {
     GtkWindow *parent_window = GTK_WINDOW(data);
@@ -309,7 +340,21 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 
     rc = sqlite3_exec(db, sql_create_table, NULL, 0, &zErrMsg);
     if (rc != SQLITE_OK) {
-        cerr << "SQL error (create table): " << zErrMsg << endl;
+        cerr << "SQL error (create login table): " << zErrMsg << endl;
+        sqlite3_free(zErrMsg);
+        sqlite3_close(db);
+        return;
+    }
+
+const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
+                                   "AccNum INTEGER NOT NULL,"
+                                   "balAMT DECIMAL PRIMARY KEY NOT NULL,"
+                                   "FOREIGN KEY (AccNum) REFERENCES LogIn(AccNum)"
+                                   ");";
+
+     rc = sqlite3_exec(db, sql_create_bal_table, NULL, 0, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        cerr << "SQL error (create bal table): " << zErrMsg << endl;
         sqlite3_free(zErrMsg);
         sqlite3_close(db);
         return;
