@@ -21,13 +21,16 @@ Encryptor encryptor;
 
 static void on_activate(GtkApplication *app, gpointer user_data);
 static void on_logout_button_clicked(GtkWidget *widget, gpointer data);
+static void on_withdraw_button_clicked(GtkWidget *widget, gpointer data);
+static void on_deposit_button_clicked(GtkWidget *widget, gpointer data);
+static void on_transfer_button_clicked(GtkWidget *widget, gpointer data);
+static void on_transaction_button_clicked(GtkWidget *widget, gpointer data);
+static void on_settings_button_clicked(GtkWidget *widget, gpointer data);
 void show_main_menu(GtkWindow *parent_window, string fname, double balance);
 void LogIn(sqlite3 *db, const string &phoneNum, const string &password, GtkWindow *parent_window);
 void SignUp(sqlite3 *db, const string &fname, const string &lname, const string &phoneNum, const string &password, GtkWindow *parent_window);
 
-void show_main_menu
-(GtkWindow *parent_window, std::string fname, double balance)
-{
+void show_main_menu(GtkWindow *parent_window, std::string fname, double balance) {
     GtkWidget *window;
     GtkWidget *label;
     GtkWidget *balance_label;
@@ -36,6 +39,11 @@ void show_main_menu
     GtkWidget *hbox;
     GtkWidget *hbox2;
     GtkWidget *spacer;
+    GtkWidget *withdraw_button;
+    GtkWidget *deposit_button;
+    GtkWidget *transfer_button;
+    GtkWidget *transactions_button;
+    GtkWidget *settings_button;
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
@@ -57,6 +65,8 @@ void show_main_menu
     logout_button = gtk_button_new_with_label("Logout");
     gtk_box_pack_end(GTK_BOX(hbox), logout_button, FALSE, FALSE, 0);
 
+    gtk_widget_set_size_request(logout_button, 100, 40);
+
     g_signal_connect(logout_button, "clicked", G_CALLBACK(on_logout_button_clicked), window);
 
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -74,6 +84,31 @@ void show_main_menu
     std::string balanceMSG = "Your Balance: $" + balanceFormatted;
     balance_label = gtk_label_new(balanceMSG.c_str());
     gtk_box_pack_start(GTK_BOX(vbox), balance_label, FALSE, FALSE, 0);
+
+    transactions_button = gtk_button_new_with_label("Transactions");
+    gtk_box_pack_start(GTK_BOX(vbox), transactions_button, FALSE, FALSE, 5);
+    gtk_widget_set_size_request(transactions_button, 100, 40);
+    g_signal_connect(transactions_button, "clicked", G_CALLBACK(on_transaction_button_clicked), window);
+    
+    withdraw_button = gtk_button_new_with_label("Withdraw");
+    gtk_box_pack_start(GTK_BOX(vbox), withdraw_button, FALSE, FALSE, 5);
+    gtk_widget_set_size_request(withdraw_button, 100, 40);
+    g_signal_connect(withdraw_button, "clicked", G_CALLBACK(on_withdraw_button_clicked), window);
+
+    deposit_button = gtk_button_new_with_label("Deposit");
+    gtk_box_pack_start(GTK_BOX(vbox), deposit_button, FALSE, FALSE, 5);
+    gtk_widget_set_size_request(deposit_button, 100, 40);
+     g_signal_connect(deposit_button, "clicked", G_CALLBACK(on_deposit_button_clicked), window);
+
+    transfer_button = gtk_button_new_with_label("Transfer");
+    gtk_box_pack_start(GTK_BOX(vbox), transfer_button, FALSE, FALSE, 5);
+    gtk_widget_set_size_request(transfer_button, 100, 40);
+    g_signal_connect(transfer_button, "clicked", G_CALLBACK(on_transfer_button_clicked), window);
+
+    settings_button = gtk_button_new_with_label("Settings");
+    gtk_box_pack_start(GTK_BOX(vbox), settings_button, FALSE, FALSE, 5);
+    gtk_widget_set_size_request(settings_button, 100, 40);
+    g_signal_connect(settings_button, "clicked", G_CALLBACK(on_settings_button_clicked), window);
 
     gtk_widget_show_all(window);
 
@@ -99,6 +134,41 @@ static void on_logout_button_clicked
     }
 
     show_message_dialog(main_menu_window, "Logout Successful!");
+}
+
+static void on_withdraw_button_clicked
+(GtkWidget *widget, gpointer data)
+{
+    GtkWindow *main_menu_window = GTK_WINDOW(data);
+    show_message_dialog(main_menu_window, "Withdraw feature not implemented yet.");
+}
+
+static void on_deposit_button_clicked
+(GtkWidget *widget, gpointer data)
+{
+    GtkWindow *main_menu_window = GTK_WINDOW(data);
+    show_message_dialog(main_menu_window, "Deposit feature not implemented yet.");
+}
+
+static void on_transfer_button_clicked
+(GtkWidget *widget, gpointer data)
+{
+    GtkWindow *main_menu_window = GTK_WINDOW(data);
+    show_message_dialog(main_menu_window, "Transfer feature not implemented yet.");
+}
+
+static void on_transaction_button_clicked
+(GtkWidget *widget, gpointer data)
+{
+    GtkWindow *main_menu_window = GTK_WINDOW(data);
+    show_message_dialog(main_menu_window, "Transactions feature not implemented yet.");
+}
+
+static void on_settings_button_clicked
+(GtkWidget *widget, gpointer data)
+{
+    GtkWindow *main_menu_window = GTK_WINDOW(data);
+    show_message_dialog(main_menu_window, "Settings feature not implemented yet.");
 }
 
 void LogIn
