@@ -462,7 +462,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
         return;
     }
 
-    const char *sql_create_table = "CREATE TABLE IF NOT EXISTS LogIn ("
+    const char *sql_create_login_table = "CREATE TABLE IF NOT EXISTS LogIn ("
                                    "AccNum INTEGER NOT NULL,"
                                    "RoutNum INTEGER NOT NULL,"
                                    "LastName TEXT NOT NULL,"
@@ -472,28 +472,58 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
                                    "PRIMARY KEY (AccNum, RoutNum, PhoneNum)"
                                    ");";
 
-    rc = sqlite3_exec(db, sql_create_table, NULL, 0, &zErrMsg);
-    if (rc != SQLITE_OK) {
+    rc = sqlite3_exec(db, sql_create_login_table, NULL, 0, &zErrMsg);
+    if (rc != SQLITE_OK)
+    {
         cerr << "SQL error (create login table): " << zErrMsg << endl;
         sqlite3_free(zErrMsg);
         sqlite3_close(db);
         return;
+    } 
+    else
+    {
+        cout << "LogIn table created successfully." << endl;
     }
 
-const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
-                                   "AccNum INTEGER NOT NULL,"
-                                   "balAMT DECIMAL NOT NULL,"
-                                   "FOREIGN KEY (AccNum) REFERENCES LogIn(AccNum)"
-                                   ");";
+    const char *sql_create_bal_table = "CREATE TABLE IF NOT EXISTS Balance ("
+                                       "AccNum INTEGER NOT NULL,"
+                                       "balAMT DECIMAL NOT NULL,"
+                                       "FOREIGN KEY (AccNum) REFERENCES LogIn(AccNum)"
+                                       ");";
 
-     rc = sqlite3_exec(db, sql_create_bal_table, NULL, 0, &zErrMsg);
-    if (rc != SQLITE_OK) {
-        cerr << "SQL error (create bal table): " << zErrMsg << endl;
+    rc = sqlite3_exec(db, sql_create_bal_table, NULL, 0, &zErrMsg);
+    if (rc != SQLITE_OK)
+    {
+        cerr << "SQL error (create balance table): " << zErrMsg << endl;
         sqlite3_free(zErrMsg);
         sqlite3_close(db);
         return;
     }
+    else
+    {
+        cout << "Balance table created successfully." << endl;
+    }
 
+    const char *sql_create_transactions_table = "CREATE TABLE IF NOT EXISTS Transactions ("
+                                                "AccNum INTEGER NOT NULL,"
+                                                "'Transaction' TEXT NOT NULL,"
+                                                "TransactionID TEXT NOT NULL,"
+                                                "FOREIGN KEY (AccNum) REFERENCES LogIn(AccNum)"
+                                                ");";
+
+    rc = sqlite3_exec(db, sql_create_transactions_table, NULL, 0, &zErrMsg);
+    if (rc != SQLITE_OK)
+    {
+        cerr << "SQL error (create transactions table): " << zErrMsg << endl;
+        sqlite3_free(zErrMsg);
+        sqlite3_close(db);
+        return;
+    }
+    else
+    {
+        cout << "Transactions table created successfully." << endl;
+    }
+    
     GtkWidget *window;
     GtkWidget *outer_box;
     GtkWidget *button_box;
